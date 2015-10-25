@@ -1,0 +1,99 @@
+---
+title: "Data Analysis and Statistical Inference Lab0+1"
+author: "LKB"
+output: html_document
+---
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+source("http://www.openintro.org/stat/data/present.R")
+
+```
+
+
+#Lab 0 - Introduction to R
+
+* dataset has `r dim(present)` dimensions.
+
+```{r}
+plot(present$year,present$girls,type = "l")
+plot(present$year,present$boys,type = "l")
+```
+
+* The max year for females was `r present$year[which.max(present$girls)]`.
+* Did the proportion of boys born in the US has decreased over time?
+
+```{r}
+plot(present$year,present$boys/(present$boys+present$girls),type = "l")
+
+```
+
+* Make a plot that displays the boy-to-girl ratio for every year in the data set. What do you see?
+
+```{r}
+plot(present$year,present$boys/present$girls,type = "l")
+
+```
+
+* Calculate absolute differences between number of boys and girls born in each year, and determine which year out of the present data had the biggest absolute difference in the number of girls and number of boys born
+
+```{r}
+plot(present$year,abs(present$boys-present$girls),type = "l")
+
+```
+  * The max differece was at year `r present$year[which.max(abs(present$boys-present$girls))]`.
+
+#Lab 1 - Introduction to Data
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+source("http://www.openintro.org/stat/data/cdc.R")
+names(cdc)
+```
+
+
+* dataset has `r dim(cdc)` dimensions.
+```{r}
+str(cdc)
+summary(cdc)
+```
+* Compute the relative frequency distribution of genhlth
+
+```{r}
+table(cdc$genhlth)
+health<-table(cdc$genhlth)/length(cdc$genhlth)
+barplot(health)
+
+```
+
+* What does the mosaic plot reveal about smoking habits and gender?
+
+```{r}
+gender_smokers = table(cdc$gender,cdc$smoke100)
+mosaicplot(gender_smokers)
+```
+
+* How many observations are in the subset under23 and smoke that you created in the previous exercise, i.e. how many people in the sample are under the age of 23 and have smoked at least 100 cigarettes in their lifetime?
+
+
+```{r}
+under23 = subset(cdc, cdc$smoke100 == 1 & cdc$age < 23)
+dim(under23)
+```
+
+* Which of the following is false based on the box plot of BMI vs. general health?
+
+```{r}
+bmi = (cdc$weight / cdc$height^2) * 703
+boxplot(bmi ~ cdc$genhlth)
+```
+
+```{r}
+hist(bmi, breaks = 50)
+```
+
+* which of the following is true about the relationship between weight and desired weight?
+
+```{r}
+plot(cdc$weight,cdc$weight)
+```

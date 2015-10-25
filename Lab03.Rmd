@@ -1,0 +1,129 @@
+---
+title: "Data Analysis and Statistical Inference Lab3"
+author: "LKB"
+output: html_document
+---
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+
+```
+
+
+#Lab 3A - Foundations for inference: Sampling distributions
+
+We consider real estate data from the city of Ames, Iowa. The details of every real estate transaction in Ames is recorded by the City Assessor's office. Our particular focus for this lab will be all residential home sales in Ames between 2006 and 2010. This collection represents our population of interest (which is rare to have access to), but we will also work with smaller samples from this population. Let's load the data.
+For this lab, we'll restrict our attention to just two of the variables: the above ground living area of the house in square feet () and the sale price (). To save some effort throughout the lab, create two variables with short names that represent these two variables.
+```{r}
+load(url("http://www.openintro.org/stat/data/ames.RData"))
+
+area <- ames$Gr.Liv.Area
+price <- ames$SalePrice
+summary(area)
+hist(area)
+```
+
+##The unknown sampling distribution
+
+If we were interested in estimating the mean living area in Ames based on a sample, we can use the sample function to sample from the population
+
+
+```{r}
+samp0 <- sample(area, 50)
+samp1 <- sample(area, 100)
+
+summary(samp0)
+summary(samp1)
+mean(samp0)
+mean(samp1)
+```
+
+
+Here we will generate 5000 samples and compute the sample mean of each.
+```{r}
+sample_means50 <- rep(NA, 5000) #init vector
+
+for(i in 1:5000){
+   samp <- sample(area, 50)
+   sample_means50[i] <- mean(samp)
+   }
+
+hist(sample_means50, breaks = 50)
+```
+
+```{r}
+sample_means10 <- rep(NA, 5000)
+sample_means100 <- rep(NA, 5000)
+sample_means150 <- rep(NA, 5000)
+
+for(i in 1:5000){
+  samp <- sample(area, 10)
+  sample_means10[i] <- mean(samp)
+  samp <- sample(area, 100)
+  sample_means100[i] <- mean(samp)
+  samp <- sample(area, 150)
+  sample_means150[i] <- mean(samp)
+}
+
+hist(sample_means10, breaks = 50)
+hist(sample_means100, breaks = 50)
+hist(sample_means150, breaks = 50)
+```
+
+
+#Lab 3B - Foundations for inference: Confidence levels
+
+If you have access to data on an entire population, say the size of every house in Ames, Iowa, it's straight forward to answer questions like, "How big is the typical house in Ames?" and "How much variation is there in sizes of houses?". If you have access to only a sample of the population, as is often the case, the task becomes more complicated. What is your best guess for the typical size if you only know the sizes of several dozen houses? This sort of situation requires that you use your sample to make inference on what your population looks like.
+
+
+```{r}
+load(url("http://www.openintro.org/stat/data/ames.RData"))
+population <- ames$Gr.Liv.Area
+samp <- sample(population, 60)
+
+summary(samp)
+hist(samp)
+
+```
+
+
+Return for a moment to the question that first motivated this lab: based on this sample, what can we infer about the population? Based only on this single sample, the best estimate of the average living area of houses sold in Ames would be the sample mean, usually denoted as $\hat(x)$ (here we're calling it sample_mean). That serves as a good point estimate but it would be useful to also communicate how uncertain we are of that estimate. This can be captured by using a confidence interval.
+
+We can calculate a 95% confidence interval for a sample mean by adding and subtracting 1.96 standard errors to the point estimat
+
+```{r}
+sample_mean <- mean(samp)
+se <- sd(samp)/sqrt(60)
+lower <- sample_mean - 1.96 * se
+upper <- sample_mean + 1.96 * se
+c(lower, upper)
+```
+
+In this case we have the luxury of knowing the true population mean since we have data on the entire population. 
+
+```{r}
+mean(population)
+```
+
+Using R, we're going to recreate many samples to learn more about how sample means and confidence intervals vary from one sample to another.
+
+```{r}
+samp_mean <- rep(NA, 50)
+samp_sd <- rep(NA, 50)
+n <- 60
+
+for(i in 1:50){
+  samp <- sample(population, n) # obtain a sample of size n = 60 from the population
+  samp_mean[i] <- mean(samp)    # save sample mean in ith element of samp_mean
+  samp_sd[i] <- sd(samp)        # save sample sd in ith element of samp_sd
+}
+
+lower <- samp_mean - 1.96 * samp_sd / sqrt(n) 
+upper <- samp_mean + 1.96 * samp_sd / sqrt(n)
+
+c(lower[1],upper[1])
+plot_ci(lower, upper, mean(population))
+
+
+```
+

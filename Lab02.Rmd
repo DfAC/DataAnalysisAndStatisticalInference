@@ -1,0 +1,77 @@
+---
+title: "Data Analysis and Statistical Inference Lab2"
+author: "LKB"
+output: html_document
+---
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+
+```
+
+
+#Unit 2 Lab 2 -  Probability
+
+lets investigate hot hands phenomena in basketball
+
+```{r}
+load(url("http://www.openintro.org/stat/data/kobe.RData"))
+head(kobe)
+kobe$basket[1:9]
+```
+
+##Q3
+Which of the following is false about the distribution of Kobe's streak lengths from the 2009 NBA finals. 
+```{r}
+kobe_streak <- calc_streak(kobe$basket)
+barplot(table(kobe_streak))
+boxplot(kobe_streak)
+summary(kobe_streak)
+```
+
+##Simulations in R
+While we don't have any data from a shooter we know to have independent shots, that is very easy to simulate in R. In a simulation, you set the ground rules of a random process and then the computer uses random numbers to generate an outcome that adheres to those rules. As a simple example, you can simulate flipping a fair coin with the following.
+
+
+```{r}
+outcomes <- c("heads", "tails")
+sim_fair_coin <-sample(outcomes, size = 100, replace = TRUE)
+table(sim_fair_coin)
+```
+
+Say we're trying to simulate an unfair coin that we know only lands heads 20% of the time
+```{r}
+sim_unfair_coin <- sample(outcomes, size = 100, replace = TRUE, prob = c(0.2, 0.8))
+table(sim_unfair_coin)
+```
+
+```{r}
+#?sample #will open another browser window
+```
+
+##Simulating the Independent Shooter
+Simulating a basketball player who has independent shots uses the same mechanism that we use to simulate a coin flip.
+
+```{r}
+library(scales)
+outcomes <- c("H", "M")
+sim_Kobe <- sample(outcomes, size = length(kobe$basket), replace = TRUE,prob = c(0.45,0.55))
+
+kobe_streak_sim <- calc_streak(sim_Kobe)
+table(kobe_streak_sim)
+summary(kobe_streak_sim)
+
+#kobe resuls
+kobe_streak <- calc_streak(kobe$basket)
+table(kobe_streak)
+#boxplot(kobe_streak,add=T,col='red')
+summary(kobe_streak)
+
+#visuals
+barplot(table(kobe_streak_sim),col='skyblue')
+barplot(table(kobe_streak),add=T,col=scales::alpha('red',.5))
+
+```
+
+for ggplot try <http://stackoverflow.com/questions/3541713/how-to-plot-two-histograms-together-in-r>
+

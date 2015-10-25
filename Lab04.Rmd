@@ -1,0 +1,90 @@
+---
+title: "Data Analysis and Statistical Inference Lab 4 -  Inference for numerical data"
+author: "LKB"
+output: html_document
+---
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+rm(list=ls(all=TRUE))
+```
+#Part A: North Carolina births
+
+In 2004, the state of North Carolina released a large data set containing information on births recorded in this state. This data set is useful to researchers studying the relation between habits and practices of expectant mothers and the birth of their children. We will work with a random sample of observations from this data set.
+
+```{r}
+load(url("http://bit.ly/dasi_nc"))
+```
+
+##Exploratory analysis
+
+We have observations on 13 different variables, some categorical and some numerical. The meaning of each variable is as follows:
+
+* fage: father's age in years.
+* mage: mother's age in years.
+* mature: maturity status of mother.
+* weeks: length of pregnancy in weeks.
+* premie: whether the birth was classified as premature (premie) or full-term.
+* visits: number of hospital visits during pregnancy.
+* marital: whether mother is married or not married at birth.
+* gained: weight gained by mother during pregnancy in pounds.
+* weight: weight of the baby at birth in pounds.
+* lowbirthweight: whether baby was classified as low birthweight (low) or not (not low).
+* gender: gender of the baby, female or male.
+* habit: status of the mother as a nonsmoker or a smoker.
+* whitemom: whether mom is white or not white.
+
+```{r}
+summary(nc$gained)
+str(nc)
+
+gained_clean = na.omit(nc$gained)
+n = length(gained_clean)
+
+```
+
+##The bootstrap
+
+Using this sample we would like to construct a bootstrap confidence interval for the average weight gained by all mothers during pregnancy. Below is a quick reminder of how bootstrapping works:
+
+1. Take a bootstrap sample (a random sample with replacement of size equal to the original sample size) from the original sample.
+2. Record the mean of this bootstrap sample.
+3. Repeat steps (1) and (2) many times to build a bootstrap distribution.
+4. Calculate the XX% interval using the percentile or the standard error method.
+
+Now let's take 100 bootstrap samples (i.e. with replacement), and record their means in a new object called boot_means. Before we take the samples, we start with creating a new object called boot_means where we can store the bootstrap means as we collect them.
+
+```{r}
+boot_means = rep(NA, 100)
+
+for(i in 1:100){
+  boot_sample = sample(gained_clean, n, replace = TRUE)
+  boot_means[i] = mean(boot_sample)    
+}
+```
+ The sampling distribution is calculated by resampling from the population, the bootstrap distribution is calculated by resampling from the sample. 
+```{r}
+hist(boot_means)
+```
+
+##The inference function
+
+```{r}
+source("http://bit.ly/dasi_inference")
+
+inference(nc$gained, type = "ci", method = "simulation", conflevel = 0.90, est = "mean", boot_method = "perc") #percentile of the sd
+inference(nc$gained, type = "ci", method = "simulation", conflevel = 0.95, est = "mean", boot_method = "perc")
+
+inference(nc$gained, type = "ci", method = "simulation", conflevel = 0.95, est = "mean", boot_method = "se") #se
+
+inference(nc$gained, type = "ci", method = "simulation", conflevel = 0.95, est = "median", boot_method = "se")
+```
+
+Create a 95% bootstrap confidence interval for the mean age of fathers at the birth of their child, nc$fage, using the standard error method. Interpret the interval within the context of the data.
+
+```{r}
+inference(nc$fage, type = "ci", method = "simulation", conflevel = 0.90, est = "mean", boot_method = "perc")
+```
+
+##Evaluating relationships between two variables
+
