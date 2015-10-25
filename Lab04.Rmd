@@ -8,6 +8,28 @@ output: html_document
 setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
 rm(list=ls(all=TRUE))
 ```
+
+#Calculating power
+
+This is a quick summary from the [Power lecture](https://class.coursera.org/statistics-004/lecture/99) how to calculate the test power.
+
+```{r}
+TestPower = rep(NA, 490)
+
+for(n in 10:500){
+  SE =  12*sqrt(2/n)
+  RR = abs(qnorm((1-.95)/2)) * SE
+  Z = (3-RR)/SE
+  TestPower[n] = pnorm(Z)
+}
+
+plot(TestPower)
+
+```
+
+
+
+
 #Part A: North Carolina births
 
 In 2004, the state of North Carolina released a large data set containing information on births recorded in this state. This data set is useful to researchers studying the relation between habits and practices of expectant mothers and the birth of their children. We will work with a random sample of observations from this data set.
@@ -86,5 +108,61 @@ Create a 95% bootstrap confidence interval for the mean age of fathers at the bi
 inference(nc$fage, type = "ci", method = "simulation", conflevel = 0.90, est = "mean", boot_method = "perc")
 ```
 
+* To construct the 95% bootstrap confidence interval using the percentile method, we are not estimating the values of the 5th and 95th percentiles of the bootstrap distribution.
+* The bootstrap distribution of the median weight gain is a smooth, unimodal, symmetric distribution that yields a reliable confidence interval estimate.
+* The sampling distribution is calculated by resampling from the population, the bootstrap distribution is calculated by resampling from the sample.
+
+
 ##Evaluating relationships between two variables
+
+```{r}
+str(nc)
+boxplot(nc$weight)
+plot(nc$habit)
+
+plot(nc$habit,nc$weight)
+by(nc$weight, nc$habit, mean)
+```
+
+##Hypothesis tests and confidence intervals
+
+```{r}
+inference(y = nc$weight, x = nc$habit, est = "mean", type = "ht", null = 0, alternative = "twosided", method = "theoretical", order = c("smoker","nonsmoker"))
+```
+
+```{r}
+inference(y = nc$weight, x = nc$habit, est = "mean", type = "ci", null = 0, alternative = "twosided", method = "theoretical", order = c("smoker","nonsmoker"))
+```
+
+We are 95% confident that babies born to nonsmoker mothers are on average 0.05 to 0.58 pounds heavier at birth than babies born to smoker mothers.
+
+##Determine the angle cut off
+```{r}
+plot(nc$mature,nc$mage)
+by(nc$mage, nc$mature, min)
+```
+
+#Part B: The General Social Survey
+
+The General Social Survey (GSS) is a sociological survey used to collect data on demographic characteristics and attitudes of residents of the United States. The survey asks many questions, two of which we will focus on for the next few exercises: wordsum (vocabulary test scores) and class (self-reported social class).
+
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+rm(list=ls(all=TRUE))
+load(url("http://bit.ly/dasi_gss_ws_cl"))
+
+summary(gss)
+str(gss)
+plot(gss$class,gss$wordsum)
+```
+
+```{r}
+source("http://bit.ly/dasi_inference")
+inference(y = gss$wordsum, x = gss$class, est = "mean", type = "ht", alternative = "greater", method = "theoretical")
+```
+
+$\alpha^* = \frac{2 \alpha}{k(k-1)}$ so $\alpha^* = \frac{\alpha}{6}$. Different are:
+* working and middle
+* middle and lower
 
