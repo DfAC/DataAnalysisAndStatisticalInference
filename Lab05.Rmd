@@ -9,9 +9,30 @@ setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
 rm(list=ls(all=TRUE))
 ```
 
+
+#Inference
+
+##Lets test if Paul can really see the future
+
 ```{r}
 source("http://bit.ly/dasi_inference")
+
+paul =  factor(c(rep("yes",8),rep("no",0)), levels = c("yes","no")))
+inference(paul, est = "proportion", type = "ht", method = "simulation",          success = "yes", null = 0.5, alternative ="greater")
 ```
+
+The probability that Paul is psychic is equal to p-value.
+
+##Back of my hand
+
+```{r}
+source("http://bit.ly/dasi_inference")
+
+hand =  factor(c(rep("correct",11),rep("wrong",1)), levels = c("correct","wrong"))
+inference(hand, est = "proportion", type = "ht", method = "simulation",          success = "correct", null = 0.5, alternative ="greater")
+```
+
+There is a ~0% (p-value) chance of 11 or more out of 12 people recognizing the backs of their hands in this experiment if in fact they were randomly guessing.
 
 
 #The survey
@@ -75,7 +96,6 @@ inference(ru12$response, est = "proportion", type = "ci", method = "theoretical"
 
 
 ## How does the proportion affect the margin of error?
-
 
 Imagine you've set out to survey 1000 people on two questions: are you female? and are you left-handed? Since both of these sample proportions were calculated from the same sample size, they should have the same margin of error, right? Wrong! While the margin of error does change with sample size, it is also affected by the proportion.
 
