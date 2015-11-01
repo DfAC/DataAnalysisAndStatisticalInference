@@ -1,0 +1,25 @@
+---
+title: "Data Analysis and Statistical Inference - Project"
+author: "LKB"
+output: 
+  html_document: 
+    highlight: zenburn
+    theme: readable
+---
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+rm(list=ls(all=TRUE))
+
+opts_chunk$set(echo = TRUE, cache = FALSE, cache.path = "cache/", fig.path = "figure/", warning = FALSE)
+#http://yihui.name/knitr/options/
+
+source("http://bit.ly/dasi_inference")
+```
+
+
+#The survey
+
+T
+Yes, following definition of type I error, the probability of getting a detectable change if there has been no change in the atheism index in the countries listed in Table 4 is `r pValue`, which translate to `r detectableChange` countries.
+

@@ -16,6 +16,15 @@ source("http://bit.ly/dasi_inference")
 
 #The survey
 
+The press release for the poll, conducted by WIN-Gallup International, can be accessed [here](http://www.wingia.com/web/files/richeditor/filemanager/Global_INDEX_of_Religiosity_and_Atheism_PR__6.pdf).
+
+The title of the report is "Global Index of Religiosity and Atheism".
+
+To generalize the report's findings to the global human population, We must assume that the sample was a random sample from the entire population in order to be able to generalize the results to the global human population. This is false because we know that there are areas of the world where the people have never been surveyed, or even counted.
+
+For a truly random sample, you would need to have the situation where every single person in the world was "available" to be surveyed. The survey might (or might not) have been close enough to random to give us useful information, but technically it would not have been "a random sample from the entire population".
+
+
 #The Data
 
 We will base our analysis on the original data set of individual responses to the survey.
@@ -66,3 +75,65 @@ inference(ru12$response, est = "proportion", type = "ci", method = "theoretical"
 
 
 ## How does the proportion affect the margin of error?
+
+
+Imagine you've set out to survey 1000 people on two questions: are you female? and are you left-handed? Since both of these sample proportions were calculated from the same sample size, they should have the same margin of error, right? Wrong! While the margin of error does change with sample size, it is also affected by the proportion.
+
+
+```{r}
+n <- 1000
+p <- seq(0, 1, 0.01)
+me <- 2*sqrt(p*(1 - p)/n)
+plot(me ~ p)
+```
+
+
+he question of atheism was asked by WIN-Gallup International in a similar survey that was conducted in 2005. We assume here that sample sizes have remained the same. Table 4 on page 13 of the report summarizes survey results from 2005 and 2012 for 39 countries.
+
+
+## Is there is convincing evidence that Spain has seen a change in its atheism index between 2005 and 2012. 
+
+```{r}
+spain = subset(atheism, atheism$nationality == "Spain")
+
+#group by year
+inference(spain$response, x = as.factor(spain$year), est = "proportion", type = "ht", method = "theoretical", success = "atheist",conflevel = 0.95, alternative= "twosided")
+
+```
+
+The important question is whether the confidence interval includes the null value (zero). For Spain, we are 95% confident that the population mean is within a range of values that does include zero.  This means that zero (no difference) is one of the likely possibilities.
+
+
+
+
+## Is There is convincing evidence that USA has seen a change in its atheism index between 2005 and 2012?
+```{r}
+us = subset(atheism, atheism$nationality == "United States")
+
+#group by year
+inference(us$response, x = as.factor(us$year), est = "proportion", type = "ht", method = "theoretical", success = "atheist",conflevel = 0.95, alternative= "twosided")
+
+```
+For the US, we are 95% confident that the population mean is within a range of values that does not include zero.
+
+##If in fact there has been no change in the atheism index in the countries listed in Table 4, in how many of those countries would you expect to detect a change (at a significance level of 0.05) simply by chance?
+
+```{r}
+noOfCountries = 39
+pValue = 1-0.95
+
+detectableChange = noOfCountries*pValue
+```
+
+Yes, following defintion of type I error, the probability of getting a detectable change if there has been no change in the atheism index in the countries listed in Table 4 is `r pValue`, which translate to `r detectableChange` countries.
+
+## Suppose you're hired by the local government to estimate the proportion of residents that attend a religious service on a weekly basis. According to the guidelines, the estimate must have a margin of error no greater than 1% with 95% confidence. You have no idea what to expect for p. How many people would you have to sample to ensure that you are within the guidelines? 
+
+
+```{r}
+prob = 0.5
+errorMargin = 0.01
+noOfSamples = (1.96*prob/errorMargin)^2
+noOfSamples
+```
+
