@@ -1,0 +1,68 @@
+---
+title: "Data Analysis and Statistical Inference Lab 4 -  Inference for numerical data"
+author: "LKB"
+output: html_document
+---
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+rm(list=ls(all=TRUE))
+```
+
+```{r}
+source("http://bit.ly/dasi_inference")
+```
+
+
+#The survey
+
+#The Data
+
+We will base our analysis on the original data set of individual responses to the survey.
+
+```{r}
+load(url("http://www.openintro.org/stat/data/atheism.RData"))
+
+str(atheism)
+summary(atheism)
+
+
+```
+
+Take a look at the estimated proportion of atheists in the United States. 
+
+```{r}
+`%ni%` <- Negate(`%in%`) #nice trick
+rows2Keep = c('response')
+
+us12 = subset(atheism, atheism$nationality == "United States" & atheism$year == "2012", select = names(atheism) %in% rows2Keep)
+
+table(us12)/nrow(us12)
+
+```
+
+This provides sample statistics and we'd like the insight into the population population parameters. You answer the question, "What proportion of people in your sample reported being atheists?" with a statistic; while the question "What proportion of people on earth would report being atheists" is answered with an estimate of the parameter.
+
+
+```{r}
+inference(us12$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+```
+
+
+Using the inference function, calculate confidence intervals for the proportion of atheists in 2012 in two other countries of your choice, and report the associated margins of error. Be sure to note whether the conditions for inference are met
+
+```{r}
+
+pl12 = subset(atheism, atheism$nationality == "Poland" & atheism$year == "2012", select = names(atheism) %in% rows2Keep)
+
+ru12 = subset(atheism, atheism$nationality == "Russian Federation" & atheism$year == "2012", select = names(atheism) %in% rows2Keep)
+
+
+inference(pl12$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+inference(ru12$response, est = "proportion", type = "ci", method = "theoretical", success = "atheist")
+
+
+```
+
+
+## How does the proportion affect the margin of error?
