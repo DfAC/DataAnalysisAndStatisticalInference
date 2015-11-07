@@ -1,11 +1,32 @@
 ---
 title: "Data Analysis and Statistical Inference Lab 6 -  Linear regression"
 author: "LKB"
-output: html_document
+output: 
+  html_document: 
+    highlight: tango
+    theme: readable
 ---
 
 ```{r, echo=FALSE}
 setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
 rm(list=ls(all=TRUE))
+
+library(knitr)
+opts_chunk$set(echo = TRUE, cache = FALSE, cache.path = "cache/", fig.path = "figure/", warning = FALSE)
+#http://yihui.name/knitr/options/
+```
+
+#Batter up
+
+
+```{r}
+load(url("http://www.openintro.org/stat/data/mlb11.RData"))
+
+colnames(mlb11)
+str(mlb11)
+```
+
+```{r}
+plot(mlb11$runs,mlb11$bat_avg)
 ```
 

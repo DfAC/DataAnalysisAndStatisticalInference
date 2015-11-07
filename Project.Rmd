@@ -18,13 +18,13 @@ opts_chunk$set(echo = TRUE, cache = FALSE, cache.path = "cache/", fig.path = "fi
 
 
 #Introduction
+Global warming is an important issue which might affect future generation. Scientific community agrees that the greenhouse effect is responsible for global warming with discussion focused on to what extend the human activity is changing this process [2]. 
 
-Global warming is an important issue which might affect future generation. Scientific community agrees that the greenhouse effect is responsible for global warming with discussion focused on to what extend human activity is changing this process [2].
+Unfortunately over the last decade, this topic has become highly politicized, with strong indication that political lobbing is overtaking rational discussion, leading to polarisation of the opinions. Given that, it is possible that interest in politics (exposure to political pundits, comments and lobbing) can translate to very polarised anty-global warming views. This lead me to my research question:
 
-Unfortunately over the last decade, this topic has been highly politicized, with political lobbing overtaking rational discussion. Given that, it is possible that interest in politics will translate to polarised anty-global warming views. Such influence creates a dangerous situation and preventing discussion. Therefore I want to answer the following research question:
+*"Does interest in politics affects ones views of the global warming."*
 
-
-*"Does interest in politics influence ones perception regarding the global warming."*
+Why should we care? Thix question is a proxy for a more complex phenomena - if we can't agree on simple fact, we will fail to establish a dialog leading to discussion and eventual solution.  and understand each other. Indication that politics lead is down this path would be a bad sign indeed.
 
 #Data collection
 
@@ -33,20 +33,19 @@ To answer this question I will be using **American National Elections Study, 201
 * INTEREST_ATTENTION answering question *How often do you pay attention to what's going on in government and politics?*
 * ENVIR_GWARM answering question *You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this?* 
 
-Both variables are categorical. This is the observational study, as correspondents have been surveyed about their current opinion. A random sampling, based on address have been conducted on sample of USA citizens 18 years or older.  Data have been collected both in face to face interviews and on-line data collection.
+As discussed in next section, we have a total of 5384 cases - responses from the correspondents (face to face or online). Both variables are categorical. This is the observational study, as correspondents have been surveyed about their current opinion. A random sampling, based on address have been conducted on sample of USA citizens 18 years or older. Data have been collected both in face to face interviews and on-line data collection.
 
-Given that I believe that my findings can be generalised to the population. As study was voluntary, there is possibility of voluntary response bias, showing results more strongly opinionated than general population. To reduce this bias I will limit my analysis to people who answered both parts of the study (pre and post election). 
+Given that I believe that my findings can be generalised to the population. As study was voluntary, there is possibility of voluntary response bias, showing results more strongly opinionated than general population. To reduce this bias I will limit my analysis to people who answered both parts of the study (pre and post election) - this committment suggest more balance resonse. 
 
 This is observation data, so casual links between the variables of interest can't be established.
 
-As discussed in next section, we have a total of 5384 cases - responses from the correspondents (face to face or online).
 
 #Exploratory data analysis
 
-I will only consider:
+For further study I will only consider:
 
-* people who responded to both Pre-Election And Post-Election Interviews
-* people who gave answers to both questions (removed 126 not complete cases)
+* people who responded to both Pre-Election And Post-Election Interviews (I believe this  this committment suggest more balance resonse).
+* people who gave answers to both questions (removed 126 not complete cases).
 
 ```{r}
 load(url("http://bit.ly/dasi_anes_data"))
@@ -73,11 +72,14 @@ mosaicplot(globalWarmingBelievers, main ="Do you believe in global warming?", xl
 
 Intial exploration of the data suggest that apart from extreme views (Never/Always) consensus is that global warming has been happening.
 
+What is also interesting to notice is that extreme views on politics are not equal - there is much more people who always follow politics than ones who never follow. Both of thos groups are minority in the society.
+
 #Inference
 
 Following my reserach question *"Does interest in politics influence ones perception regarding the global warming"*, I will state following hipothesis
 
 $H_0:$ Interest in politics does not affect ones views about global warming and proportion of people beliving in global warming is constant across all groups.
+
 $H_A:$ Interest in politics influence ones views about global warming.
 
 To prove my theory I will run $\chi^2$ test of independence, thesing if selected categorical variables are dependent of each other.
@@ -98,7 +100,7 @@ inference(y = anes$envir_gwarm, x = anes$interest_attention, est = "proportion",
 
 ```
 
-Results indicate that Response and explanatory variable are dependent. Following analysis of the data in the previos section I can assume that this is mostly to responses from extreme views (Never/Always) and otherwise citizens behaviour is not affected.
+Results indicate that response and explanatory variable are dependent. Following analysis of the data in the previos section I can assume that this is mostly to responses from extreme views (Never/Always) and otherwise citizens behaviour is not affected.
 
 ##Do extreme views (Never/Always) skew results?
 
@@ -121,10 +123,13 @@ Without extreme cases there is no evidence to reject $H_0$ hypothesis.
 
 #Conclusion
 
-In this study we explored the reserach question *"Does interest in politics influence ones perception regarding the global warming"*. 
+In this study we explored the research question *"Does interest in politics influence ones perception regarding the global warming"*. 
 Results indicate, that apart from extreme cases American society in general (`r USAConsensus[1]*100`%) believes in global warming. 
-This proportion is different for two groups with very strong belives (Always/Never). Interestingly proportion of citizens not beliving in global warming is highest in the latest group.
-Those results indicate that there is no evidence of interest in politics affecting understanding of scientific research. What would be interesting is to understand why such large number of citizens not following politics is does not believe in global warming.
+This proportion is different for two groups with very strong belies (Always/Never). Interestingly proportion of citizens not believing in global warming is highest in the latest group. Those results indicate that there is no evidence of interest in politics affecting understanding of scientific research.
+
+While groups with very strong belies (Always/Never) are smaller then other ones it would be important to explore them further and understand how those group differ from other people? Are there any other characteristics that set them apart?
+
+Probably most interesting here are citizens who not following politics, despite being much smaller then other groups - it would be important to understand what makes them hold views different to rest of the society. 
 
 
 #References

@@ -94,3 +94,12 @@ We are evaluating relationship between two categorical variables.
 * expected count in two way table $= \frac{\text{row total} * \text{column total}{\text{table total}}
 * we are evaluating relationship between two categorical variable
 
+#General notes regarding testing
+
+Which situation requires which technique:
+* One numerical and one categorical variable (with only 2 levels): hypothesis test + confidence interval
+	* parameter of interest = difference between two means (theoretical or simulation)
+	* parameter of interest = difference between two medians (simulation only)
+* One numerical and one categorical variable (with more than 2 levels): hypothesis test only compare means across several groups no defined parameter of interest, ANOVA and pairwise tests (theoretical only)
+* Two categorical variables (each with only 2 levels): hypothesis test + confidence interval parameter of interest = difference between two proportions (theoretical if success-failure condition met, simulation if not)
+* Two categorical variables (either one or both with more than 2 levels): hypothesis test only compare proportions across several groups no defined parameter of interest, Chi-square test only (theoretical if expected sample size condition met, simulation if not)
