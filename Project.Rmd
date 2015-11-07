@@ -8,8 +8,8 @@ output:
 ---
 
 ```{r, echo=FALSE}
-setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
 rm(list=ls(all=TRUE))
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
 
 library(knitr)
 opts_chunk$set(echo = TRUE, cache = FALSE, cache.path = "cache/", fig.path = "figure/", warning = FALSE)
@@ -31,8 +31,16 @@ Why should we care? Thix question is a proxy for a more complex phenomena - if w
 To answer this question I will be using **American National Elections Study, 2012 Time Series Study Coursera Extract** [1].  I will be looking at following variables:
 
 * INTEREST_ATTENTION answering question *How often do you pay attention to what's going on in government and politics?*
+    * categorical variable with 5 levels:
+      * Always
+      * Most Of The Time
+      * About Half The Time
+      * Some Of The Time
+      * Never
 * ENVIR_GWARM answering question *You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this?* 
-
+    * categorical variable with two levels (yes/no)
+  
+  
 As discussed in next section, we have a total of 5384 cases - responses from the correspondents (face to face or online). Both variables are categorical. This is the observational study, as correspondents have been surveyed about their current opinion. A random sampling, based on address have been conducted on sample of USA citizens 18 years or older. Data have been collected both in face to face interviews and on-line data collection.
 
 Given that I believe that my findings can be generalised to the population. As study was voluntary, there is possibility of voluntary response bias, showing results more strongly opinionated than general population. To reduce this bias I will limit my analysis to people who answered both parts of the study (pre and post election) - this committment suggest more balance resonse. 
@@ -48,16 +56,25 @@ For further study I will only consider:
 * people who gave answers to both questions (removed 126 not complete cases).
 
 ```{r}
+library(plyr) #for mapvalues
 load(url("http://bit.ly/dasi_anes_data"))
 
 columns2Keep = c('caseid','interest_attention','envir_gwarm')
 
 anes = anes[anes$wave_completions == 'Yes (Pre-Election And Post-Election Interviews Completed)',columns2Keep]
 anes <- anes[complete.cases(anes),] #remove participants with any of data missing
+```
+
+```{r}
+#smiplify global warming answers to yes/no
+oldVal = levels(anes$envir_gwarm)
+anes$envir_gwarm = mapvalues(anes$envir_gwarm,from = oldVal, to = c("yes","no"))
+
 str(anes)
 summary(anes) 
 
 ```
+
 
 Overall we have `r length(anes$interest_attention)` cases - responses from the correspondents (face to face or online).
 
@@ -82,7 +99,7 @@ $H_0:$ Interest in politics does not affect ones views about global warming and 
 
 $H_A:$ Interest in politics influence ones views about global warming.
 
-To prove my theory I will run $\chi^2$ test of independence, thesing if selected categorical variables are dependent of each other.
+We have multiple groups so to prove my theory the easiest approach is to use $\chi^2$ test of independence, verifying if our categorical variables (interest in politics and opinion about global warming) are independent of each other. With multiple groups we can't check hypothesis and confidence interval separately and we need to relay on the $\chi^2$ test of independence.
 
 ##Check conditions
 
@@ -91,16 +108,21 @@ In order to use $\chi^2$ test of independence sample has to be:
 * independent - test description indicate that samples (cases) have been random, consist <10% of population and each case is counted only once
 * each scenario (interest in politics) nave at least 5 expected cases
 
+Both of those are fulfilled - we only collected sample of the population and each of our groups has more then 5 responses.
+
 ##Results
 
+
 ```{r}
-source("http://bit.ly/dasi_inference")
+source(file = "statistics-lab_resources-inference.R")
+#source("http://bit.ly/dasi_inference")
 
 inference(y = anes$envir_gwarm, x = anes$interest_attention, est = "proportion", type = "ht",  alternative = "greater", method = "theoretical",eda_plot = FALSE, inf_plot = FALSE )
 
 ```
 
 Results indicate that response and explanatory variable are dependent. Following analysis of the data in the previos section I can assume that this is mostly to responses from extreme views (Never/Always) and otherwise citizens behaviour is not affected.
+
 
 ##Do extreme views (Never/Always) skew results?
 
