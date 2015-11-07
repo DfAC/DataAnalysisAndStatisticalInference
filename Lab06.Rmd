@@ -1,0 +1,11 @@
+---
+title: "Data Analysis and Statistical Inference Lab 6 -  Linear regression"
+author: "LKB"
+output: html_document
+---
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+rm(list=ls(all=TRUE))
+```
+
