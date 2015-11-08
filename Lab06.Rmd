@@ -26,7 +26,12 @@ colnames(mlb11)
 str(mlb11)
 ```
 
+In addition to runs scored, there are seven traditionally used variables in the data set: at_bats, hits, homeruns, bat_avg (batting average), strikeouts, stolen_bases, and wins. Also see [Rules of baseball](https://en.wikipedia.org/wiki/Baseball_rules) and a [description of these statistics](, visit  and http://en.wikipedia.org/wiki/Baseball_statistics).
+
+
 ```{r}
 plot(mlb11$runs,mlb11$bat_avg)
+cor(mlb11$runs, mlb11$at_bats)
 ```
 
+#Sum of squared residuals
