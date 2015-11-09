@@ -1,96 +1,47 @@
-# Unit 5 -  Inference for categorical variables
+# Unit 6 -  Introduction to linear regression
 
-#Sampling variable
+#Linear Correlation
 
-We will sample (point estimate) population and deliver a $$\hat p$ of parameter of interest, whihc will be $\hat p \pm z^*SE_{\hat p}$
+* swapping axis does not make difference
+* correlation coefficient is unitless and it is not affected by change of units
+* sensitive to outliers
+* residuals are defined as $e_i =  y_i - \hat{y_i}$ as data = fit + residuals
+* if we want to fit the line
+	* slope $b_1 = \frac{S_y}{S_x}R$
+	* intercept $b_0  = \bar{ y } -b_1\bar{ x }$
+	* intercept point will always pass through the middle of the data
+* L2 is LS
+* L1 is abs values
+* be careful with extrapolation
+* conditions for linear regression
+	* linearity - use residual plots
+	* near normal residuals - histogram + QQ plot
+	* constant variability (homoscedasticity) - residual plots
+* R^2 - what % of model is explained by response variable
 
-## CLT for Proportions
- 
-For sampling variable we can simplify problem by using binormal distribution.
-$\hat p \sim N( mean = p, SE = \sqrt(\frac{p(1-p)}{n})))$
-$Z = \frac{\hat p - p}{SE}$
+#Regression with categorise variables
 
-
-Conditions that need to be meet:
-
-* * independence: in and between groups
-	*  <10% of population
-* sample skew
-	* at least 10 successes and 10 failures
-	* $n \hat p \geq 10$ and $ n(1 - \hat p) \geq 10$
-
-###Additional notes
-
-* The confidence level is about percentage of samples that yield intervals capturing the population parameter, not about predicting where future samples will fall. 
-* If the CLT doesn't apply and the sample proportion is low (close to 0) the sampling distribution will likely be right skewed, if the sample proportion is high (close to 1) the sampling distribution will likely be left skewed.
-
-##Reducing the confidence intervals
-
-To reduce the confidence intervals we can use same approach as before and increase number of samples.
-if we dont know probability, best approach is to be conservative and assume 50-50%
-
-##Hypothesis test (proportions)
-
-* We are testing against the population proportion (p).
-* To calculate SE for sample or diff between two samples we will use exactly the same approach as last week.
-* In hypothesis testing for one categorical variable, generate simulated samples based on the null hypothesis, and then calculate the number of samples that are at least as extreme as the observed data.
+* one of the will be base value (==0)
+* we estimate values as intercept + estimate4variable1 +estimate4variable2 + ...
 
 
-##Working with two categorical variables
+#Outlayer
 
-* we will assume one to be explanatory (grouping) variable and other response variable.
-* point estimate will be difference between two proportions
-* $SE = z^* qrt{\frac{\hat p_1 (1- \hat p_1)}{n_1}+\frac{\hat p_2 (1- \hat p_2)}{n_2}}$
-	* We always want population parameters (not sample statistics) in the hypotheses (both for conditions and standard error)
-	* For confidence interval we use observed $\hat p$
-* if we don't have known proportion we will use pool proportion $\hat p_ppol = \frac{\text{total success}}{\text{total n}}$
-	* Our parameter of interest is p, affecting SE calculations (this does not happen with numerival variables where $\mu$ does not affect SE)
+* out layers are point away from the clound of points
+* if they fall horizontal and dint influence the slope of regression line are leverage points
+* one that influence the slope line are called influential points
+	* its worth to take influential points out
+	* don't act blind, think why you take them out
+	* influential points might increase R-squared - always view the plot !
 
-##Working with small samples
+#inference for linear regression
 
-What if we got small sample other words when we don't meet success failure conditions ?
-	* we will need to set up simulation to get our distribution
-		* we base it on logic that p-value is P(observed or more extreme outcome | H0 is true)
-		* we will repeat simulation a lot of times to do so
-
-###Comparing two small sample proportions
-
-* we create hypothesis on the difference
-* we know that independence and success/failure requirements wont be meet
-* we will simulate the difference now
-* we will do test on the simulation
-
-##Summary
-
-* Use simulation methods when sample size conditions aren't met for inference for categorical variables.
-	* t-distribution is only appropriate to use for means. When sample size isn't sufficiently large, and the parameter of interest is a proportion or a difference between two proportions, we need to use simulation.
-* In hypothesis testing
-	* for one categorical variable, generate simulated samples based on the null hypothesis, and then calculate the number of samples that are at least as extreme as the observed data.
-	* for two categorical variables, use a randomization test.
-
-
-#Chi-square GOF test
-
-* Goodness of Fit test - how well observed data fits the expected distribution
-	* we are comparing cdistribution of one categorical variable to a hypothesed distribution
-* conditions of chi-square
-	* samples must be independent
-		* random
-		* <10% of population
-		* each case is counted only once
-	* each scenario (cell) must have at least 5 expected cases
-	* we will compare collected data against expected count in each group (cell)
-* chi-square has only one parameter (df)
-	* $\hat{\chi}^2= \sum_{k=1}^{n} \frac{(O_k - E_k)^2}{E_k}$ is based on difference between observed - expected in each group (cell)
-	* p-value ofr a chi-square test is defined as tail area above the calculated test statistic
-
-
-#Chi-square independence test 
-
-We are evaluating relationship between two categorical variables.
-
-**Test of independence** is based on $\hat{\chi}^2= \sum_{k=1}^{n} \frac{(O_k - E_k)^2}{E_k} with degrees of freedom calculated from $df = (R-1)(C-1)$ dependant on number of rows and columns
-* conditions are the same as GOF
-* expected count in two way table $= \frac{\text{row total} * \text{column total}{\text{table total}}
-* we are evaluating relationship between two categorical variable
-
+* hypothesis - is the explanatory variable a significant predictor of the variable
+	* Hypotheses are always about parameters (not point estimates) and subscript 0 refers to the intercept and 1 refers to the slope.
+	* $H_0 = \beta_1$ and $H_A = \beta_1 \neq 0$ as we test for **any** relationship between explanatory and response variables
+	* we use t statistics $T = \frac{b_1-0}{SE_{b1}}$ and $df = n -2$
+		* abs(qt(1-0.5*ConfidenceInterval,df-2)) so for 95% and df=27 qt(0.975,25)
+	* confidence interval is $b_1 \pm t^*_{df}SE_{b1}$
+	* statistical inference is meaningless if you already have population data
+	* inference on the intercept is rarely done
+	* partitioning variability in y to explained and unexplained variablilty require analysis of variance (ANOVA)

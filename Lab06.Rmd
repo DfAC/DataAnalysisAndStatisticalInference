@@ -30,8 +30,100 @@ In addition to runs scored, there are seven traditionally used variables in the 
 
 
 ```{r}
+require(stats)
+
 plot(mlb11$runs,mlb11$bat_avg)
-cor(mlb11$runs, mlb11$at_bats)
+
+text <- sprintf("Correlation is %.2f",cor(mlb11$runs, mlb11$at_bats))
+text(600,.27, text, col = "blue", font = 4)
+abline(lsfit(mlb11$runs,mlb11$bat_avg), col = "blue", lwd = 3, lty = 2)
+
+
+
 ```
 
+
+
+
 #Sum of squared residuals
+
+
+```{r}
+plot_ss(x = mlb11$at_bats, y = mlb11$runs)
+plot_ss(x = mlb11$at_bats, y = mlb11$runs, showSquares = TRUE)
+```
+
+The relationship is positive, linear, and moderately strong. One of the potential outliers is a team with approximately 5520 at bats.
+
+#The linear model
+
+```{r}
+m1 <- lm(runs ~ at_bats, data = mlb11)
+summary(m1)
+```
+
+```{r}
+m1 <- lm(runs ~ homeruns, data = mlb11)
+summary(m1)
+
+plot(mlb11$runs,mlb11$homeruns)
+abline(lsfit(mlb11$runs,mlb11$homeruns), col = "blue", lwd = 3, lty = 2)
+
+```
+
+For each additional home run, the model predicts 1.83 more runs, on average.
+
+#Prediction and prediction errors
+
+
+```{r}
+m1 <- lm(runs ~ at_bats, data = mlb11)
+plot(mlb11$runs ~ mlb11$at_bats)
+abline(m1, col = "blue", lwd = 3, lty = 2)
+mlb11$runs[mlb11$at_bats == 5579]
+```
+
+#Model diagnostics
+
+To assess whether the linear model is reliable, we need to check for 
+
+1. linearity
+2. nearly normal residuals
+3. constant variability.
+
+
+```{r}
+plot(m1$residuals ~ mlb11$at_bats) #linearity
+abline(h = 0, col = "red", lwd = 2, lty = 3) 
+
+hist(m1$residuals)  #nearly normal residuals
+
+
+qqnorm(m1$residuals) #constant variability
+qqline(m1$residuals, col = "red", lwd = 2, lty = 3) 
+
+```
+
+
+* The residuals appear to be randomly distributed around 0.
+* The residuals are fairly symmetric, with only a slightly longer tail on the right, hence it would be appropriate to deem the the normal distribution of residuals condition met.
+
+```{r}
+m1 <- lm(runs ~ at_bats, data = mlb11)
+summary(m1)
+m1 <- lm(runs ~ hits, data = mlb11) 
+summary(m1)
+m1 <- lm(runs ~ wins, data = mlb11) 
+summary(m1)
+m1 <- lm(runs ~ bat_avg, data = mlb11)
+summary(m1)
+```
+
+```{r}
+m1 <- lm(runs ~ new_obs, data = mlb11) 
+summary(m1)
+m1 <- lm(runs ~ new_slug, data = mlb11) 
+summary(m1)
+m1 <- lm(runs ~ new_onbase, data = mlb11)
+summary(m1)
+```
