@@ -25,7 +25,7 @@
 * we estimate values as intercept + estimate4variable1 +estimate4variable2 + ...
 
 
-#Outlayer
+#Out-layer
 
 * out layers are point away from the clound of points
 * if they fall horizontal and dint influence the slope of regression line are leverage points
@@ -44,4 +44,7 @@
 	* confidence interval is $b_1 \pm t^*_{df}SE_{b1}$
 	* statistical inference is meaningless if you already have population data
 	* inference on the intercept is rarely done
-	* partitioning variability in y to explained and unexplained variablilty require analysis of variance (ANOVA)
+	* partitioning variability in y to explained and unexplained variability require analysis of variance (ANOVA)
+
+
+
