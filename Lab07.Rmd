@@ -12,7 +12,7 @@ setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
 rm(list=ls(all=TRUE))
 
 library(knitr)
-opts_chunk$set(echo = TRUE, cache = FALSE, cache.path = "cache/", fig.path = "figure/", warning = FALSE)
+opts_chunk$set(echo = TRUE, cache = T, cache.path = "cache/", fig.path = "figure/", warning = FALSE)
 #http://yihui.name/knitr/options/
 ```
 
@@ -73,7 +73,6 @@ chart.Correlation(states[2:6]) #good and fast
 
 
 library(corrplot)
-onlyNumerical<-states[2:6]
 
 #order by FCP
 corrplot.mixed(cor(states[2:6]), lower = "ellipse", upper = "number", order = "FPC")
@@ -175,7 +174,119 @@ In this lab we will analyze the data from this study in order to learn what goes
 ##The data
 
 ```{r}
+rm(list=ls(all=TRUE))
+load(url("http://www.openintro.org/stat/data/evals.RData"))
+
+summary(evals$score)
+histogram(evals$score)
+```
+
+Select two other variables and describe their relationship using an appropriate visualization (scatterplot, side-by-side boxplots, or mosaic plot).
+```{r}
+
+varOfInterest = table(evals$rank,evals$ethnicity)
+mosaicplot(varOfInterest, color = 3:4)
 
 ```
 
+##Simple linear regression
+
+The fundamental phenomenon suggested by the study is that better looking teachers are evaluated more favorably.
+
+```{r}
+plot(evals$score ~ evals$bty_avg)
+#add a bit of nose so we can see all the points
+plot(jitter(evals$score) ~ jitter(evals$bty_avg))
+
+m_bty = lm(evals$score ~ evals$bty_avg)
+summary(m_bty)
+abline(m_bty)
+
+```
+
+Average beauty score is not a statistically and practically significant predictor. 
+
+```{r}
+
+#linear relationship test
+plot(m_bty$residuals~ jitter(evals$bty_avg))
+hist(m_bty$residuals)
+qqnorm(m_bty$residuals)
+qqline(m_bty$residuals)
+
+#constant variability of residuals
+plot(m_bty$residuals ~ m_bty$fitted)
+plot(abs(m_bty$residuals) ~ m_bty$fitted)
+
+#independent residuals
+plot(m_bty$residuals)
+```
+
+##Multiple linear regression
+
+The data set contains several variables on the beauty score of the professor: individual ratings from each of the six students who were asked to score the physical appearance of the professors and the average of these six scores. Let's take a look at the relationship between one of these scores and the average beauty score.
+
+```{r}
+library(corrplot)
+
+plot(evals$bty_avg ~ evals$bty_f1lower)
+cor(evals$bty_avg, evals$bty_f1lower)
+#plot(evals[,13:19])
+
+
+#order by FCP
+corrplot.mixed(cor(evals[,13:19]), lower = "ellipse", upper = "number", order = "FPC")
+#order by herarhical clustering and then show groups
+corrplot(cor(evals[,13:19]), method = "number", order = "hclust", addrect = 2)
+
+```
+
+These variables are collinear (correlated), and adding more than one of these variables to the model would not add much value to the model. In this application and with these highly-correlated predictors, it is reasonable to use the average beauty score as the single representative of these variables.
+
+In order to see if beauty is still a significant predictor of professor score after we've accounted for the gender of the professor, we can add the gender term into the model.
+
+
+```{r}
+m_bty_gen <- lm(score ~ bty_avg + gender, data = evals)
+summary(m_bty_gen)
+
+multiLines(m_bty_gen)
+```
+
+Create a new model called m_bty_rank with gender removed and rank added in. 
+
+
+```{r}
+m_bty_rank <- lm(score ~ bty_avg + rank, data = evals)
+summary(m_bty_rank)
+
+multiLines(m_bty_rank)
+```
+
+
+# The search for the best model
+
+```{r}
+m_full <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval 
+             + cls_students + cls_level + cls_profs + cls_credits + bty_avg, data = evals)
+summary(m_full)
+
+
+m_full <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval 
+             + cls_students + cls_level + cls_profs + cls_credits, data = evals)
+summary(m_full)
+
+
+m_full <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval 
+             + cls_students + cls_level + cls_credits + bty_avg, data = evals)
+summary(m_full)
+
+m_full <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval 
+             + cls_level + cls_profs + cls_credits + bty_avg, data = evals)
+summary(m_full)
+
+m_full <- lm(score ~ ethnicity + gender + language + age + cls_perc_eval 
+             + cls_students + cls_level + cls_profs + cls_credits + bty_avg, data = evals)
+summary(m_full)
+```
 
