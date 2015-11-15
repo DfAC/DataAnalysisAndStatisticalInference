@@ -1,0 +1,181 @@
+---
+title: "Data Analysis and Statistical Inference Lab 7"
+author: "LKB"
+output: 
+  html_document: 
+    highlight: pygments
+    theme: cerulean
+---
+
+```{r, echo=FALSE}
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+rm(list=ls(all=TRUE))
+
+library(knitr)
+opts_chunk$set(echo = TRUE, cache = FALSE, cache.path = "cache/", fig.path = "figure/", warning = FALSE)
+#http://yihui.name/knitr/options/
+```
+
+#Lectures
+
+Testing the weight of the books
+
+```{r}
+
+library(DAAG)
+data(allbacks)
+
+#fit model
+
+book_mlr = lm(weight ~ volume + cover, data = allbacks)
+summary(book_mlr)
+
+```
+
+##R^2 adjusted
+
+Lts first consider single variable model
+
+```{r}
+
+states = read.csv("http://d396qusza40orc.cloudfront.net/statistics/lec_resources/states.csv")
+pov_slr = lm(poverty ~ female_house, data = states )
+summary(pov_slr)
+plot(poverty ~ female_house, data = states )
+
+```
+
+Notice that % of variability not explained is residuals as $R^2 = \frac{\text{explained variability}}{\text{total variability}}$. Lets now add more variables
+
+
+```{r}
+
+pov_mlr = lm(poverty ~ female_house + white, data = states )
+summary(pov_mlr)
+
+anova(pov_mlr)
+
+
+```
+
+###  Correlation of predictors
+ 
+
+```{r}
+require(lattice)
+require(ggplot2)
+library(GGally)
+
+library(PerformanceAnalytics)
+chart.Correlation(states[2:6]) #good and fast
+
+#ggpairs(states[2:6]) #beautiful but dead slow
+
+
+library(corrplot)
+onlyNumerical<-states[2:6]
+
+#order by FCP
+corrplot.mixed(cor(states[2:6]), lower = "ellipse", upper = "number", order = "FPC")
+#order by herarhical clustering and then show groups
+corrplot(cor(states[2:6]), method = "number", order = "hclust", addrect = 3)
+
+```
+
+
+###Inference for MLR
+
+```{r}
+
+cognitive = read.csv("http://bit.ly/dasi_cognitive")
+cog_full = lm(kid_score ~ mom_hs+mom_iq+mom_work+mom_age, data = cognitive )
+summary(cog_full)
+
+
+cog_final = lm(kid_score ~ mom_hs+mom_iq+mom_work, data = cognitive )
+#linear relationship test
+plot(cog_final$residuals ~ cognitive$mom_iq) #we can only test numerical
+hist(cog_final$residuals)
+qqnorm(cog_final$residuals)
+qqline(cog_final$residuals)
+
+#constant variability of residuals
+plot(cog_final$residuals ~ cog_final$fitted)
+plot(abs(cog_final$residuals) ~ cog_final$fitted)
+
+#independent residuals
+plot(cog_final$residuals)
+```
+
+
+
+```{r}
+#https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.htm
+library(corrplot)
+M <- cor(mtcars)
+
+corrplot.mixed(M, lower = "ellipse", upper = "number")
+corrplot.mixed(M, lower = "ellipse", upper = "number", order = "FPC")
+corrplot(M, method = "number", order = "hclust", addrect = 3) #draw rectangles around the chart of corrrlation matrix based on the results of hierarchical clustering.
+```
+
+
+```{r}
+library(PerformanceAnalytics)
+#see http://www.r-bloggers.com/more-on-exploring-correlations-in-r/
+
+## Correlation matrix with p-values.
+##See http://goo.gl/nahmV for documentation of this function
+cor.prob <- function (X, dfr = nrow(X) - 2) {
+  R <- cor(X, use="pairwise.complete.obs")
+  above <- row(R) < col(R)
+  r2 <- R[above]^2
+  Fstat <- r2 * dfr/(1 - r2)
+  R[above] <- 1 - pf(Fstat, 1, dfr)
+  R[row(R) == col(R)] <- NA
+  R
+}
+
+## Use this to dump the cor.prob output to a 4 column matrix
+## with row/column indices, correlation, and p-value.
+## See StackOverflow question: http://goo.gl/fCUcQ
+flattenSquareMatrix <- function(m) {
+  if( (class(m) != "matrix") | (nrow(m) != ncol(m))) stop("Must be a square matrix.") 
+  if(!identical(rownames(m), colnames(m))) stop("Row and column names must be equal.")
+  ut <- upper.tri(m)
+  data.frame(i = rownames(m)[row(m)[ut]],
+             j = rownames(m)[col(m)[ut]],
+             cor=t(m)[ut],
+             p=m[ut])
+}
+
+# get some data from the mtcars built-in dataset
+mydata <- mtcars[, c(1,3,4,5,6)]
+
+# correlation matrix
+cor(mydata)
+
+# correlation matrix with p-values
+cor.prob(mydata)
+
+# "flatten" that table
+flattenSquareMatrix(cor.prob(mydata))
+
+# plot the data
+library(PerformanceAnalytics)
+chart.Correlation(mydata)
+```
+
+#Lab 7: Multiple linear regression
+
+Many college courses conclude by giving students the opportunity to evaluate the course and the instructor anonymously. However, the use of these student evaluations as an indicator of course quality and teaching effectiveness is often criticized because these measures may reflect the influence of non-teaching related characteristics, such as the physical appearance of the instructor. 
+
+In this lab we will analyze the data from this study in order to learn what goes into a positive professor evaluation.
+
+##The data
+
+```{r}
+
+```
+
+
