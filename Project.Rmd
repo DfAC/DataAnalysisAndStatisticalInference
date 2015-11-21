@@ -4,7 +4,7 @@ title: "Data Analysis and Statistical Inference"
 output: 
   html_document: 
     highlight: tango
-    theme: readable
+    theme: cerulean
 ---
 
 ```{r, echo=FALSE}
@@ -43,7 +43,8 @@ To answer this question I will be using **American National Elections Study, 201
   
 As discussed in next section, we have a total of 5384 cases - responses from the correspondents (face to face or online). Both variables are categorical. This is the observational study, as correspondents have been surveyed about their current opinion. A random sampling, based on address have been conducted on sample of USA citizens 18 years or older. Data have been collected both in face to face interviews and on-line data collection.
 
-Given that I believe that my findings can be generalised to the population. As study was voluntary, there is possibility of voluntary response bias, showing results more strongly opinionated than general population. To reduce this bias I will limit my analysis to people who answered both parts of the study (pre and post election) - this committment suggest more balance resonse. 
+Given that I believe that my findings can be generalised to the population. As study was voluntary, there is possibility of voluntary response bias, showing results more strongly opinionated than general population. Given dataset it is impossible to remove this bias.
+If we focus on correspondents who answered both parts of the study (pre and post election) we can at least remove event correlated opinons. Individuals only intrested in commenting about current events are more likely to ignore secondary survey
 
 This is observation data, so casual links between the variables of interest can't be established.
 
@@ -87,9 +88,18 @@ mosaicplot(globalWarmingBelievers, main ="Do you believe in global warming?", xl
 
 ```
 
-Intial exploration of the data suggest that apart from extreme views (Never/Always) consensus is that global warming has been happening.
+Intial exploration of the data suggest that most of USA population belive in global warming. This ratio is different for small fraction of correspondents with extreme views (Never/Always). The biggest difference can be observed in the smallest group of peope not following politics (Never).
 
-What is also interesting to notice is that extreme views on politics are not equal - there is much more people who always follow politics than ones who never follow. Both of thos groups are minority in the society.
+```{r, echo=F}
+Precentage<-100*table(anes$interest_attention)/length(anes$interest_attention)
+Precentage<-sprintf("With %.2f%% correspondents belonging to Always group and %.2f%% to Never one",Precentage[1],Precentage[5])
+
+```
+
+`r Precentage`, we can confidently the last group as outlayers, consisting of correspondents with highly profilated views. Small group like this group is expected to exist within every demoncrating community.
+
+While **Always** group can be suffering from voluntary response bias its size makes it difficult to exclude on this alone. Instead I want to explore a supporting hypothesis:  
+*If we exclude extreme groups (Always/Never), does interest in politics influence ones perception regarding the global warming?*
 
 #Inference
 
@@ -99,7 +109,7 @@ $H_0:$ Interest in politics does not affect ones views about global warming and 
 
 $H_A:$ Interest in politics influence ones views about global warming.
 
-We have multiple groups so to prove my theory the easiest approach is to use $\chi^2$ test of independence, verifying if our categorical variables (interest in politics and opinion about global warming) are independent of each other. With multiple groups we can't check hypothesis and confidence interval separately and we need to relay on the $\chi^2$ test of independence.
+We have multiple groups so to the most correct approach is $\chi^2$ test of independence, verifying if our categorical variables (interest in politics and opinion about global warming) are independent of each other. With multiple groups we can't check hypothesis and confidence interval separately and we need to relay on the $\chi^2$ test of independence only.
 
 ##Check conditions
 
@@ -121,17 +131,26 @@ inference(y = anes$envir_gwarm, x = anes$interest_attention, est = "proportion",
 
 ```
 
-Results indicate that response and explanatory variable are dependent. Following analysis of the data in the previos section I can assume that this is mostly to responses from extreme views (Never/Always) and otherwise citizens behaviour is not affected.
+Results from comparing all groups indicate that response and explanatory variable are dependent (we can reject $H_0$). We have alloready indentifed that this is most likely to inclusion of groups with extreme views (Never/Always). Lets consider what happends if we remove those groups from analysis
+
+
+
+Following analysis of the data in the previos section I can assume that this is mostly to responses from  and otherwise citizens behaviour is not affected.
 
 
 ##Do extreme views (Never/Always) skew results?
+
+In this section we exlore supporting research quesion, identifed during data analysis:
+
+*If we exclude extreme groups (Always/Never), does interest in politics influence ones perception regarding the global warming?*
+
 
 ```{r}
 source("http://bit.ly/dasi_inference")
 
 allowedResponses = levels(anes$interest_attention)
-allowedResponses = allowedResponses[2:4] #remove extreme responses
-
+allowedResponses = allowedResponses[1:4] #remove extreme responses
+#allowedResponses = allowedResponses[2:4] #remove extreme responses
 nonExtremeCorrespondents = anes[anes$interest_attention %in% allowedResponses,]
 nonExtremeCorrespondents$interest_attention = factor(nonExtremeCorrespondents$interest_attention) #remove dropped levels
 
@@ -140,18 +159,24 @@ inference(y = nonExtremeCorrespondents$envir_gwarm, x = nonExtremeCorrespondents
 USAConsensus= table(nonExtremeCorrespondents$envir_gwarm)/length(nonExtremeCorrespondents$envir_gwarm)
 ```
 
-Without extreme cases there is no evidence to reject $H_0$ hypothesis.
+If we exlude extreme cases, with **Never** identified as outlayer and **Always** as possibly suffering from voluntary bias, there is no evidence to reject $H_0$ hypothesis, suggesting that interest in politics and acceptance of global warming are not correlated.
 
 
 #Conclusion
 
 In this study we explored the research question *"Does interest in politics influence ones perception regarding the global warming"*. 
-Results indicate, that apart from extreme cases American society in general (`r USAConsensus[1]*100`%) believes in global warming. 
-This proportion is different for two groups with very strong belies (Always/Never). Interestingly proportion of citizens not believing in global warming is highest in the latest group. Those results indicate that there is no evidence of interest in politics affecting understanding of scientific research.
+On surface, if we consider all responses as a representation of American society, there is a relationship between interest in politics and the opinion about global warming.
 
-While groups with very strong belies (Always/Never) are smaller then other ones it would be important to explore them further and understand how those group differ from other people? Are there any other characteristics that set them apart?
+Analysis suggest a more complex picture, as non-matching opinions belong only to groups with very strong belies (Always/Never). Those can be described respectively as a group with strongly profiled views and a grumpy minority, not interested in following politics. If we exclude those groups, there is no evidence of relationship interest in politics and the opinion about global warming, with (`r USAConsensus[1]*100`%) correspondents believing in global warming. 
 
-Probably most interesting here are citizens who not following politics, despite being much smaller then other groups - it would be important to understand what makes them hold views different to rest of the society. 
+This results does rise a important insight, showing that **strong** interest in politics might lead to highly profiled views, making further discussion very difficult. Yet, it is the smallest, grumpy group (Never) with largest proportion of correspondents  not following the general consensus.
+
+#Future work
+
+It would be recomendedt to explore Always/Never groups further in order to understand how they differ from other groups and are there any other characteristics that set them apart. Two separate questions to answer here would be:
+
+* Can we interest **Never** group in following politics/current events? Is their behaviour indication of general discontent? What makes them hold views different to rest of the society?
+* Is there anything worrying in the behaviour of the **Always** group? Is this possibly a radicalisation of their's beliefs, preventing future dialogue?
 
 
 #References
