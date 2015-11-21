@@ -1,0 +1,198 @@
+---
+title: "Data Analysis and Statistical Inference"
+#author: "LKB"
+output: 
+  html_document: 
+    highlight: tango
+    theme: cerulean
+---
+
+```{r, echo=FALSE}
+rm(list=ls(all=TRUE))
+setwd("d:/tmp/Dropbox/Edu/Coursea/DataAnalysisAndStatisticalInference/")
+
+library(knitr)
+opts_chunk$set(echo = TRUE, cache = FALSE, cache.path = "cache/", fig.path = "figure/", warning = FALSE)
+#http://yihui.name/knitr/options/
+```
+
+
+#Introduction
+Global warming is an important issue which might affect future generation. Scientific community agrees that the greenhouse effect is responsible for global warming with discussion focused on to what extend the human activity is changing this process [2]. 
+
+Unfortunately over the last decade, this topic has become highly politicized, with strong indication that political lobbing is overtaking rational discussion, leading to polarisation of the opinions. Given that, it is possible that interest in politics (exposure to political pundits, comments and lobbing) can translate to very polarised anty-global warming views. This lead me to my research question:
+
+*"Does interest in politics affects ones views of the global warming."*
+
+Why should we care? Thix question is a proxy for a more complex phenomena - if we can't agree on simple fact, we will fail to establish a dialog leading to discussion and eventual solution.  and understand each other. Indication that politics lead is down this path would be a bad sign indeed.
+
+#Data collection
+
+To answer this question I will be using **American National Elections Study, 2012 Time Series Study Coursera Extract** [1].  I will be looking at following variables:
+
+* INTEREST_ATTENTION answering question *How often do you pay attention to what's going on in government and politics?*
+    * categorical variable with 5 levels:
+      * Always
+      * Most Of The Time
+      * About Half The Time
+      * Some Of The Time
+      * Never
+* ENVIR_GWARM answering question *You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this?* 
+    * categorical variable with two levels (yes/no)
+  
+  
+As discussed in next section, we have a total of 5384 cases - responses from the correspondents (face to face or online). Both variables are categorical. This is the observational study, as correspondents have been surveyed about their current opinion. A random sampling, based on address have been conducted on sample of USA citizens 18 years or older. Data have been collected both in face to face interviews and on-line data collection.
+
+Given that I believe that my findings can be generalised to the population. As study was voluntary, there is possibility of voluntary response bias, showing results more strongly opinionated than general population. Given dataset it is impossible to remove this bias.
+If we focus on correspondents who answered both parts of the study (pre and post election) we can at least remove event correlated opinons. Individuals only intrested in commenting about current events are more likely to ignore secondary survey
+
+This is observation data, so casual links between the variables of interest can't be established.
+
+
+#Exploratory data analysis
+
+For further study I will only consider:
+
+* people who responded to both Pre-Election And Post-Election Interviews (I believe this  this committment suggest more balance resonse).
+* people who gave answers to both questions (removed 126 not complete cases).
+
+```{r}
+library(plyr) #for mapvalues
+load(url("http://bit.ly/dasi_anes_data"))
+
+columns2Keep = c('caseid','interest_attention','envir_gwarm')
+
+anes = anes[anes$wave_completions == 'Yes (Pre-Election And Post-Election Interviews Completed)',columns2Keep]
+anes <- anes[complete.cases(anes),] #remove participants with any of data missing
+```
+
+```{r}
+#smiplify global warming answers to yes/no
+oldVal = levels(anes$envir_gwarm)
+anes$envir_gwarm = mapvalues(anes$envir_gwarm,from = oldVal, to = c("yes","no"))
+
+str(anes)
+summary(anes) 
+
+```
+
+
+Overall we have `r length(anes$interest_attention)` cases - responses from the correspondents (face to face or online).
+
+Lets visualise this data.
+
+```{r}
+globalWarmingBelievers = table(anes$interest_attention,anes$envir_gwarm)
+
+mosaicplot(globalWarmingBelievers, main ="Do you believe in global warming?", xlab = "Do you pay attention to what's going on in government and politics?",ylab = "Is global warming happening?", color = 3:4)
+
+```
+
+Intial exploration of the data suggest that most of USA population belive in global warming. This ratio is different for small fraction of correspondents with extreme views (Never/Always). The biggest difference can be observed in the smallest group of peope not following politics (Never).
+
+```{r, echo=F}
+Precentage<-100*table(anes$interest_attention)/length(anes$interest_attention)
+Precentage<-sprintf("With %.2f%% correspondents belonging to Always group and %.2f%% to Never one",Precentage[1],Precentage[5])
+
+```
+
+`r Precentage`, we can confidently the last group as outlayers, consisting of correspondents with highly profilated views. Small group like this group is expected to exist within every demoncrating community.
+
+While **Always** group can be suffering from voluntary response bias its size makes it difficult to exclude on this alone. Instead I want to explore a supporting hypothesis:  
+*If we exclude extreme groups (Always/Never), does interest in politics influence ones perception regarding the global warming?*
+
+#Inference
+
+Following my reserach question *"Does interest in politics influence ones perception regarding the global warming"*, I will state following hipothesis
+
+$H_0:$ Interest in politics does not affect ones views about global warming and proportion of people beliving in global warming is constant across all groups.
+
+$H_A:$ Interest in politics influence ones views about global warming.
+
+We have multiple groups so to the most correct approach is $\chi^2$ test of independence, verifying if our categorical variables (interest in politics and opinion about global warming) are independent of each other. With multiple groups we can't check hypothesis and confidence interval separately and we need to relay on the $\chi^2$ test of independence only.
+
+##Check conditions
+
+In order to use $\chi^2$ test of independence sample has to be:
+
+* independent - test description indicate that samples (cases) have been random, consist <10% of population and each case is counted only once
+* each scenario (interest in politics) nave at least 5 expected cases
+
+Both of those are fulfilled - we only collected sample of the population and each of our groups has more then 5 responses.
+
+##Results
+
+
+```{r}
+source(file = "statistics-lab_resources-inference.R")
+#source("http://bit.ly/dasi_inference")
+
+inference(y = anes$envir_gwarm, x = anes$interest_attention, est = "proportion", type = "ht",  alternative = "greater", method = "theoretical",eda_plot = FALSE, inf_plot = FALSE )
+
+```
+
+Results from comparing all groups indicate that response and explanatory variable are dependent (we can reject $H_0$). We have alloready indentifed that this is most likely to inclusion of groups with extreme views (Never/Always). Lets consider what happends if we remove those groups from analysis
+
+
+
+Following analysis of the data in the previos section I can assume that this is mostly to responses from  and otherwise citizens behaviour is not affected.
+
+
+##Do extreme views (Never/Always) skew results?
+
+In this section we exlore supporting research quesion, identifed during data analysis:
+
+*If we exclude extreme groups (Always/Never), does interest in politics influence ones perception regarding the global warming?*
+
+
+```{r}
+source("http://bit.ly/dasi_inference")
+
+allowedResponses = levels(anes$interest_attention)
+allowedResponses = allowedResponses[1:4] #remove extreme responses
+#allowedResponses = allowedResponses[2:4] #remove extreme responses
+nonExtremeCorrespondents = anes[anes$interest_attention %in% allowedResponses,]
+nonExtremeCorrespondents$interest_attention = factor(nonExtremeCorrespondents$interest_attention) #remove dropped levels
+
+inference(y = nonExtremeCorrespondents$envir_gwarm, x = nonExtremeCorrespondents$interest_attention, est = "proportion", type = "ht",  alternative = "greater", method = "theoretical",eda_plot = FALSE, inf_plot = FALSE )
+
+USAConsensus= table(nonExtremeCorrespondents$envir_gwarm)/length(nonExtremeCorrespondents$envir_gwarm)
+```
+
+If we exlude extreme cases, with **Never** identified as outlayer and **Always** as possibly suffering from voluntary bias, there is no evidence to reject $H_0$ hypothesis, suggesting that interest in politics and acceptance of global warming are not correlated.
+
+
+#Conclusion
+
+In this study we explored the research question *"Does interest in politics influence ones perception regarding the global warming"*. 
+On surface, if we consider all responses as a representation of American society, there is a relationship between interest in politics and the opinion about global warming.
+
+Analysis suggest a more complex picture, as non-matching opinions belong only to groups with very strong belies (Always/Never). Those can be described respectively as a group with strongly profiled views and a grumpy minority, not interested in following politics. If we exclude those groups, there is no evidence of relationship interest in politics and the opinion about global warming, with (`r USAConsensus[1]*100`%) correspondents believing in global warming. 
+
+This results does rise a important insight, showing that **strong** interest in politics might lead to highly profiled views, making further discussion very difficult. Yet, it is the smallest, grumpy group (Never) with largest proportion of correspondents  not following the general consensus.
+
+#Future work
+
+It would be recomendedt to explore Always/Never groups further in order to understand how they differ from other groups and are there any other characteristics that set them apart. Two separate questions to answer here would be:
+
+* Can we interest **Never** group in following politics/current events? Is their behaviour indication of general discontent? What makes them hold views different to rest of the society?
+* Is there anything worrying in the behaviour of the **Always** group? Is this possibly a radicalisation of their's beliefs, preventing future dialogue?
+
+
+#References
+
+[1] American National Election Studies (ANES; www.electionstudies.org). The ANES 2012 Time Series Study [dataset]. Stanford University and the University of Michigan [producers].
+
+Further information about the dataset can be found at <https://d396qusza40orc.cloudfront.net/statistics%2Fproject%2Fanes1.html#envir_gwarm>. Full description of study can be accessed at <http://electionstudies.org/studypages/anes_timeseries_2012/anes_timeseries_2012_userguidecodebook.pdf>
+
+[2] Silver, Nate (2012-09-27). The Signal and the Noise: The Art and Science of Prediction (p. 376). Penguin Books Ltd. Kindle Edition have been used.
+
+
+#Appendix
+
+Attached is the sample of my final dataset
+
+```{r}
+head(anes,40)
+```
+
