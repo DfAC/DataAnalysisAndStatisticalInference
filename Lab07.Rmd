@@ -289,4 +289,3 @@ m_full <- lm(score ~ ethnicity + gender + language + age + cls_perc_eval
              + cls_students + cls_level + cls_profs + cls_credits + bty_avg, data = evals)
 summary(m_full)
 ```
-

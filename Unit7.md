@@ -12,7 +12,7 @@ We have a set of numerical and categorical explanatory variables (multiple predi
 * R2 will never decrease when a predictor is added to a linear model.
 * $R^2 = \frac{\text{explained variability}}{\text{total variability}} so % of variability not explained is residuals
 * therefore R^2 it will increase for every variable we add to compensate we use equation $R^2_{adj} = 1 - \frac{SSE}{SST}\frac{n-1}{n-k-1}	$, where k is no of predictors and n is model size
-* Adjusted R2 tells us the percentage of variability in the response variable explained by the model, but also has a penalty for the number of predictors included in the model.
+* Adjusted R2 tells us the percentage of variability in the response variable explained by the model, with a penalty for the number of predictors included in the model.
 
 # Collinearity and parsimony
 

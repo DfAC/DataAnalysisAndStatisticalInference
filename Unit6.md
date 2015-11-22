@@ -27,8 +27,8 @@
 
 #Out-layer
 
-* out layers are point away from the clound of points
-* if they fall horizontal and dint influence the slope of regression line are leverage points
+* out layers are point away from the cloud of points
+* if they fall horizontal and don't influence the slope of regression line are leverage points
 * one that influence the slope line are called influential points
 	* its worth to take influential points out
 	* don't act blind, think why you take them out
@@ -46,5 +46,8 @@
 	* inference on the intercept is rarely done
 	* partitioning variability in y to explained and unexplained variability require analysis of variance (ANOVA)
 
+#Variability Partitioning
+
+* In ANOVA F statistics for the linear model is the ratio of explained to unexplained variability
 
 

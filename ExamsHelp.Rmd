@@ -65,3 +65,14 @@ In a blood testing procedure, blood samples from 4 people are combined into one 
 #eqivalent to
 1 - (1-.12)^4
 ```
+
+
+#Stats
+
+A 2013 poll found that 24% of 3,226 randomly sampled Chinese adults see crime as a serious issue. Suppose an issue will get special attention from the Chinese government if more than 1-in-5 Chinese adults express concern on an issue.
+
+Suppose you want to conduct this hypothesis test using a simulation method. Which of the following is the most appropriate set up for simulating the null distribution, and calculating the p-value for this hypothesis test?
+
+* *Place 100 chips in a bag, 24 red and 76 green. Sample, with replacement, 3226 chips, and record the proportion of reds. Repeat many times, and calculate the proportion of simulations where the proportion of reds is at least 20%.*
+
+Suppose you want to conduct the earlier hypothesis test using a Central Limit Theorem based ("theoretical") method. Suppose also that you want to construct a confidence interval for the proportion of Chinese adults who see crime as a serious issue using this same sample. What standard error(s) should you use for the hypothesis test (HT) and the confidence interval (CI)?

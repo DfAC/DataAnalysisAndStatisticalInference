@@ -11,7 +11,7 @@ More samples we have less variables we have from the samples
 
 The distribution of sample statistics is nearly normal, centred at the population mean, and with a standard deviation equal to the population standard deviation divided by square root of the sample size.
 
-Conditions: 
+Conditions:
 
 * the sampled observations must be independent with respect to the variable in question - sampling need to be independent
 * if sampling without replacement, sample **n < 10% of population**
@@ -24,7 +24,7 @@ OTher:
 ##Confidence intervals
 
 * $\hat x = z \frac{s}{\sqrt n}$ where s is the sample standard error.
-* $SE= \frac{\sigma}{\sqrt{n}}$, standard error is calculated using samples from the same population 
+* $SE= \frac{\sigma}{\sqrt{n}}$, standard error is calculated using samples from the same population
 * If we choose large confidence level (CL) we stop being informative.
 * If we increase sample size we will increase precision and accuracy.
 * we can estimate sample size required for a desired margin of error (ME) using $n=(\frac{z*s}{ME})^2$.
@@ -77,7 +77,7 @@ OTher:
 
 
 * p-value = P (observed or more extreme outcome | H0 true), "the probability of obtaining a random sample of 40 college students where the average reaction distance is 9.51 cm or less, if in fact the true average reaction distance of all college students is 10 cm."
-* he two box plots below display distributions of midterm scores for all students in two different sections of a public policy course. Assume that both classes have an even number of students, and that none of the students within each section had identical scores. 
+* he two box plots below display distributions of midterm scores for all students in two different sections of a public policy course. Assume that both classes have an even number of students, and that none of the students within each section had identical scores.
 	* It's impossible to tell because while we know that a score of 55 is below the 25th percentile for both distributions, we can't tell from the box plots what the actual percentile for this observation is under the two distributions.
 * The distribution of the sample always mimics the population distribution. It's the shape of the sampling distribution that changes based on the sample size, not the shape of the sample distribution.
 * Spread of the sampling distribution is the standard error

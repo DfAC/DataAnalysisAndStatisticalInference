@@ -2,10 +2,10 @@
 
 ## t-distribution
 
-We use it when $\sigma$ is unknown (almost always). Due to shape confidence level for t- distribution will be wider. 
+We use it when $\sigma$ is unknown (almost always). Due to shape confidence level for t- distribution will be wider.
 
 * to calculate critical t score we use R *abs(qt((1-.95)/2,df=21))*
-* to calculate two tail p value we use * 2*pt(Z,df=df, lower.tail =F) *
+* to calculate two tail p value we use * 2*qt(Z,df=df, lower.tail =F) *
 
 ##Interference on multiple variables
 
@@ -15,9 +15,9 @@ We use it when $\sigma$ is unknown (almost always). Due to shape confidence leve
 
 What if it dependent?
 	- they will be paired
-	- we estimate different
+	- we estimate difference
 	- we do hypothesis on difference
-	- we estimate p-val = *pt(abs(Z),df=df, lower.tail = F)* 
+	- we estimate p-val = *pt(abs(Z),df=df, lower.tail = F)*
 
 
 ## Power
@@ -30,7 +30,7 @@ How can we calculate what is the best sample size for the give power?
 * we calculate critical value for our significance level from  abs(qnorm((1-.95)/2))
 * we calculate rejection region from RR = CriticalValue*s
 * we define what effect we are trying to detect and estimate the power from $\frac{EffectSize-RR}{s}$
-* how large sample size we need to calculate desired power?	
+* how large sample size we need to calculate desired power?
 	* estimate needed power as percentile from qnorm(.8) (PV)
 	* estimate a new SE from $SE = \frac{EffectSize}{PV+CriticialValue}$
 	* use first equation for s to estimate n needed while given SE as s.
@@ -53,7 +53,7 @@ Which means are different? Most important problem here is type I error, as we in
 
 * The distribution is skewed, so the median is a better measure of the typical observation.
 
-It is impossible to estimate a population parameter from only one sample. This is why we use bootstrapping. 
+It is impossible to estimate a population parameter from only one sample. This is why we use bootstrapping.
 
 * Bootstrap distributions are constructed by sampling with replacement from the original sample, while sampling distributions are constructed by sampling with replacement from the population.
 * Bootstrap distributions are centered at the population parameter, sampling distributions are centered at the sample statistic.
