@@ -34,7 +34,7 @@ So following cat question:
 If you randomly select a video on YouTube, the probability that it involves a cat is 0.11. Over the course of a week, you watch 100 videos on YouTube using an app that randomly selects videos (the random video picker). How many cat videos would you need to see to suspect that the random video picker is biased towards cat videos (i.e. yields an unusually high number of cat videos compared to what is expected)?
 
 
-The correct answer will be probablity of sucess << .11
+The wrong approach is to use distribution directly
 
 ```{r}
 #4 or less
@@ -44,14 +44,26 @@ pbinom(4, size=100, prob=0.11)
 pbinom(7, size=100, prob=0.11) 
 
 #18 or more
-1 - pbinom(18, size=100, prob=0.11) 
-
+1 - pbinom(17, size=100, prob=0.11) 
+sum(dbinom(18:100,size=100, prob=0.11)) 
 
 #31 or more
-1 - pbinom(31, size=100, prob=0.11) 
+1 - pbinom(30, size=100, prob=0.11) 
 ```
 
-So its 31+, which is also logical.
+The proper approach is to look at error propagation
+$\mu = np$ and $\sigma = \sqrt[]{np(1-p)}$
+
+```{r}
+prob = 0.11
+n = 100
+expected = n*prob
+SE = sqrt(n*prob*(1-prob))
+
+expected + (2*SE)
+expected - (2*SE)
+```
+So 18 or more videos would be evidence for bias for cat videos and 4 or fewer videos would be evidence for bias against cat videos.
 
 
 ##Blood testing. 
@@ -76,3 +88,21 @@ Suppose you want to conduct this hypothesis test using a simulation method. Whic
 * *Place 100 chips in a bag, 24 red and 76 green. Sample, with replacement, 3226 chips, and record the proportion of reds. Repeat many times, and calculate the proportion of simulations where the proportion of reds is at least 20%.*
 
 Suppose you want to conduct the earlier hypothesis test using a Central Limit Theorem based ("theoretical") method. Suppose also that you want to construct a confidence interval for the proportion of Chinese adults who see crime as a serious issue using this same sample. What standard error(s) should you use for the hypothesis test (HT) and the confidence interval (CI)?
+
+#Stats theory
+If the F-test assessing the overall significance of a multiple linear regression yields a significant p-value, all variables included in the model must be significant predictors.
+
+#Samples
+
+ A professor gives a test to 1000 students and determines the median score. After grading the test, she realizes that the 100 students with the highest scores did exceptionally well. She decides to award these 100 students a bonus of 5 more points. Is the median of the new score distribution going to be different?
+
+```{r}
+students<-sample(100,1000,replace=T)
+students<-sort(students)
+summary(students)
+
+students[901:1000]<-students[901:1000]+5
+summary(students)
+```
+
+In a lottery game players select 5 numbers between 1 and 60. Historical data has been collected on the frequency of winning numbers, and we would like to evaluate whether the draws are random, or whether certain numbers are more likely to be drawn than others. Which of the following methods should we use?
