@@ -76,7 +76,7 @@ library(corrplot)
 
 #order by FCP
 corrplot.mixed(cor(states[2:6]), lower = "ellipse", upper = "number", order = "FPC")
-#order by herarhical clustering and then show groups
+#order by hierarchical clustering and then show groups
 corrplot(cor(states[2:6]), method = "number", order = "hclust", addrect = 3)
 
 ```
